@@ -22,3 +22,28 @@ def course_list(request):
                 data=serializer.data, status=status.HTTP_201_CREATED
             )
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def course_detail(request, pk):
+    if request.method == 'GET':
+        course = Course.objects.get(pk=pk)
+        serializer = CourseSerializer(course)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
+        course = Course.objects.get(pk=pk)
+        serializer = CourseSerializer(course, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                data=serializer.data, status=status.HTTP_200_OK
+            )
+
+    if request.method == 'DELETE':
+        course = Course.objects.get(pk=pk)
+        course.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
