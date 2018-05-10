@@ -4,7 +4,7 @@ from rest_framework.views import status
 from .models import Course
 
 
-class TestViews(APITestCase):
+class TestCourses(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.course = Course.objects.create(
@@ -29,6 +29,12 @@ class TestViews(APITestCase):
             }
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_get_detail_courses(self):
+        response = self.client.get(
+            reverse('course_detail', kwargs={'pk': self.course.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_put_courses(self):
         response = self.client.put(

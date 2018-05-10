@@ -26,14 +26,17 @@ def course_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def course_detail(request, pk):
-    if request.method == 'GET':
+    try:
         course = Course.objects.get(pk=pk)
+    except Course.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
         serializer = CourseSerializer(course)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'PUT':
-        course = Course.objects.get(pk=pk)
         serializer = CourseSerializer(course, data=request.data)
 
         if serializer.is_valid():
@@ -43,7 +46,6 @@ def course_detail(request, pk):
             )
 
     if request.method == 'DELETE':
-        course = Course.objects.get(pk=pk)
         course.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
